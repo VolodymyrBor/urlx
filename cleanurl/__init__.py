@@ -1,1 +1,1 @@
-from url import Url
+from .url import Url

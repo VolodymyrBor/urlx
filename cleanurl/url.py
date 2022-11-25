@@ -1,6 +1,7 @@
 import copy
 from pathlib import Path
 from typing import TypeAlias
+from types import MappingProxyType
 
 StrDict: TypeAlias = dict[str, str]
 
@@ -16,7 +17,6 @@ class Url:
         '_port',
         '_scheme',
         '_query',
-        '_cashed_build_url',
     )
 
     def __init__(
@@ -26,19 +26,17 @@ class Url:
         host: str = 'localhost',
         username: str | None = None,
         password: str | None = None,
-        path: Path = Path('/'),
+        path: Path = Path(''),
         port: int | None = None,
         query: StrDict | None = None,
     ):
         self._port = port
-        self._path = path
+        self._path = self._normalize_path(path)
         self._password = password
         self._username = username
         self._host = host
         self._scheme = scheme
-        self._query: dict = {} if query is None else query
-
-        self._cashed_build_url: str | None = None
+        self._query: dict = {} if query is None else copy.copy(query)
 
     @classmethod
     def parse(cls, raw_url: str) -> 'Url':
@@ -101,12 +99,19 @@ class Url:
         return self._path
 
     @property
-    def query(self) -> StrDict:
-        return self._query
+    def query(self) -> MappingProxyType[str, str]:
+        return MappingProxyType(self._query)
+
+    @property
+    def contains_auth(self) -> bool:
+        return all((
+            self.username is not None,
+            self.password is not None,
+        ))
 
     def join_path(self, path: Path) -> 'Url':
         new_url = copy.copy(self)
-        new_url._path = new_url._path.joinpath(path)
+        new_url._path = new_url._path.joinpath(self._normalize_path(path))
         return new_url
 
     def update_query(self, query: StrDict) -> 'Url':
@@ -115,19 +120,20 @@ class Url:
         return new_url
 
     def _build_url(self) -> str:
-
-        if self._cashed_build_url is not None:
-            return self._cashed_build_url
-
         auth_part = f'{self._username}:{self._password}@' if self._password and self._username else ''
         port = f':{self._port}' if self._port else ''
         query_part = '?' + '&'.join(
             f'{key}={value}'
             for key, value in self._query.items()
         ) if self._query else ''
-        build_url = f'{self._scheme}://{auth_part}{self._host}{port}/{self._path.as_posix()}{query_part}'
-        self._cashed_build_url = build_url
-        return build_url
+        path_part = '' if self._path == Path('') else self._path.as_posix()
+        return f'{self._scheme}://{auth_part}{self._host}{port}/{path_part}{query_part}'
+
+    @staticmethod
+    def _normalize_path(path: Path | None) -> Path | None:
+        if path is None:
+            return None
+        return Path(str(path).strip('/\\'))
 
     def __eq__(self, other: 'Url') -> bool | None:
         if not isinstance(other, Url):
@@ -136,15 +142,17 @@ class Url:
         return all((
             self.scheme == other.scheme,
             self.host == other.host,
-            self.username == other.username,
-            self.password == other.password,
+            (
+                self.username == other.username
+                and self.password == other.password
+            ) if self.contains_auth else True,
             self.port == other.port,
             self.path == other.path,
             self.query == other.query,
         ))
 
     def __hash__(self) -> int:
-        return hash(repr(self))
+        return hash(str(self))
 
     def __copy__(self) -> 'Url':
         return Url(
@@ -165,16 +173,3 @@ class Url:
         cls_name = cls.__name__
         method_name = cls.parse.__name__
         return f'{cls_name}.{method_name}({self._build_url()!r})'
-
-
-if __name__ == '__main__':
-    url = Url(
-        scheme='http',
-        host='127.0.0.1',
-        port=8000,
-        username='ubuntu',
-        password='ubuntu',
-        path=Path('api/net'),
-        query={'query': 'books'},
-    )
-    print(url)

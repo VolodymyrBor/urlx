@@ -42,6 +42,11 @@ class Url:
 
     @classmethod
     def parse(cls, raw_url: str) -> 'Url':
+        """Parse string-url to `Url`
+
+        :param raw_url: string url
+        :return: parsed `Url`
+        """
         scheme, raw_url = raw_url.split('://', 1)
         username, password = None, None
         if '@' in raw_url:
@@ -78,45 +83,87 @@ class Url:
 
     @property
     def scheme(self) -> str:
+        """Scheme getter
+
+        :return: `scheme`
+        """
         return self._scheme
 
     @property
     def username(self) -> str | None:
+        """Username getter
+
+        :return: `username`
+        """
         return self._username
 
     @property
     def password(self) -> str | None:
+        """Password getter
+
+        :return: `password`
+        """
         return self._password
 
     @property
     def host(self) -> str:
+        """Host getter
+
+        :return: `host`
+        """
         return self._host
 
     @property
     def port(self) -> int | None:
+        """Port getter
+
+        :return: `port`
+        """
         return self._port
 
     @property
     def path(self) -> Path:
+        """Path getter
+
+        :return: url path
+        """
         return self._path
 
     @property
     def query(self) -> MappingProxyType[str, str]:
+        """Query getter
+
+        :return: unmodifiable view of query
+        """
         return MappingProxyType(self._query)
 
     @property
     def contains_auth(self) -> bool:
+        """Check that url contains auth part
+
+        :return: True if `username` and `password` are not None
+        """
         return all((
             self.username is not None,
             self.password is not None,
         ))
 
     def join_path(self, path: Path) -> 'Url':
+        """Join path to url
+
+        :param path: additional path
+        :return: new url
+        """
         new_url = copy.copy(self)
         new_url._path = new_url._path.joinpath(self._normalize_path(path))
         return new_url
 
     def update_query(self, query: StrDict) -> 'Url':
+        """Update query part of the url
+
+        :param query: dict of query parameters
+        :return: new url
+        """
         new_url = copy.copy(self)
         new_url._query.update(query)
         return new_url
@@ -131,6 +178,17 @@ class Url:
         path: Path = _EMPTY,
         query: dict = _EMPTY,
     ) -> 'Url':
+        """Copy url with new attributes
+
+        :param scheme: scheme
+        :param host: host
+        :param port: port
+        :param username: username
+        :param password: password
+        :param path: path
+        :param query: query
+        :return: new url
+        """
         copied_url = copy.copy(self)
 
         if scheme is not _EMPTY:
@@ -151,6 +209,11 @@ class Url:
         return copied_url
 
     def build(self, secure_password: bool = False) -> str:
+        """Build str-representation of the url
+
+        :param secure_password: `password` will be hidden if it's `True`
+        :return: str-representation of the url
+        """
         auth_part = ''
         if self._password and self._username:
             password = '<password>' if secure_password else self._password
@@ -166,6 +229,11 @@ class Url:
 
     @staticmethod
     def _normalize_path(path: Path | None) -> Path | None:
+        """Normalized path - remove extra symbols like `\` and `/`
+
+        :param path: path
+        :return: normalized path
+        """
         if path is None:
             return None
         return Path(str(path).strip('/\\'))

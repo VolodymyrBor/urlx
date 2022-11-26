@@ -207,3 +207,31 @@ class TestUrl:
     ))
     def test_contains_auth(self, url: Url, result: bool):
         assert url.contains_auth is result
+
+    def test_copy_with(self):
+        url = Url(
+            scheme='https',
+            username='ubuntu',
+        )
+
+        assert url.copy_with(scheme='http').scheme == 'http'
+        assert url.copy_with(host='myhost').host == 'myhost'
+        assert url.copy_with(username=None).username is None
+        assert url.copy_with(password='root').password == 'root'
+        assert url.copy_with(query={1: 2}).query == {1: 2}
+        assert url.copy_with(path=Path('some/path')).path == Path('some/path')
+
+        copied_url = url.copy_with(
+            port=34,
+            query={1: 2},
+        )
+        assert copied_url.port == 34
+        assert copied_url.query == {1: 2}
+        assert copied_url.query is not url.query
+
+    def test_build_with_secure_password(self):
+        url = Url(
+            username='ubuntu',
+            password='secret_password',
+        )
+        assert url.build(secure_password=True) == 'https://ubuntu:<password>@localhost/'

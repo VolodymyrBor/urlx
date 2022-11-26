@@ -5,6 +5,8 @@ from types import MappingProxyType
 
 StrDict: TypeAlias = dict[str, str]
 
+_EMPTY = object()
+
 
 class Url:
 
@@ -119,8 +121,41 @@ class Url:
         new_url._query.update(query)
         return new_url
 
-    def _build_url(self) -> str:
-        auth_part = f'{self._username}:{self._password}@' if self._password and self._username else ''
+    def copy_with(
+        self,
+        scheme: str = _EMPTY,
+        host: str = _EMPTY,
+        port: int | None = _EMPTY,
+        username: str | None = _EMPTY,
+        password: str | None = _EMPTY,
+        path: Path = _EMPTY,
+        query: dict = _EMPTY,
+    ) -> 'Url':
+        copied_url = copy.copy(self)
+
+        if scheme is not _EMPTY:
+            copied_url._scheme = scheme
+        if host is not _EMPTY:
+            copied_url._host = host
+        if port is not _EMPTY:
+            copied_url._port = port
+        if username is not _EMPTY:
+            copied_url._username = username
+        if password is not _EMPTY:
+            copied_url._password = password
+        if path is not _EMPTY:
+            copied_url._path = path
+        if query is not _EMPTY:
+            copied_url._query = query
+
+        return copied_url
+
+    def build(self, secure_password: bool = False) -> str:
+        auth_part = ''
+        if self._password and self._username:
+            password = '<password>' if secure_password else self._password
+            auth_part = f'{self._username}:{password}@'
+
         port = f':{self._port}' if self._port else ''
         query_part = '?' + '&'.join(
             f'{key}={value}'
@@ -166,10 +201,10 @@ class Url:
         )
 
     def __str__(self) -> str:
-        return self._build_url()
+        return self.build()
 
     def __repr__(self) -> str:
         cls = type(self)
         cls_name = cls.__name__
         method_name = cls.parse.__name__
-        return f'{cls_name}.{method_name}({self._build_url()!r})'
+        return f'{cls_name}.{method_name}({self.build()!r})'

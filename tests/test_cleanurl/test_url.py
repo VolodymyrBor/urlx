@@ -150,9 +150,8 @@ class TestUrl:
     @pytest.mark.parametrize(('path', 'result'), (
         (Path('root/'), Path('root')),
         (Path('/root'), Path('root')),
-        (None, None),
     ))
-    def test__normalize_path(self, path: Path | None, result: Path | None):
+    def test__normalize_path(self, path: Path, result: Path | None):
         assert Url._normalize_path(path) == result
 
     @pytest.mark.parametrize(('base_url', 'path', 'final_url'), (

@@ -3,7 +3,11 @@ from pathlib import Path
 from typing import TypeAlias
 from types import MappingProxyType
 
+from .url_enums import Protocol, Port
+
 StrDict: TypeAlias = dict[str, str]
+_PORT_T: TypeAlias = Port | int | None
+_PROTOCOL_T: TypeAlias = Protocol | str
 
 _EMPTY = object()
 
@@ -17,19 +21,19 @@ class Url:
         '_password',
         '_host',
         '_port',
-        '_scheme',
+        '_protocol',
         '_query',
     )
 
     def __init__(
         self,
         *,
-        scheme: str = 'https',
+        protocol: _PROTOCOL_T = Protocol.HTTPS,
         host: str = 'localhost',
         username: str | None = None,
         password: str | None = None,
         path: Path = Path(''),
-        port: int | None = None,
+        port: _PORT_T = None,
         query: StrDict | None = None,
     ):
         self._port = port
@@ -37,7 +41,7 @@ class Url:
         self._password = password
         self._username = username
         self._host = host
-        self._scheme = scheme
+        self._protocol = protocol
         self._query: dict = {} if query is None else copy.copy(query)
 
     @classmethod
@@ -47,7 +51,7 @@ class Url:
         :param raw_url: string url
         :return: parsed `Url`
         """
-        scheme, raw_url = raw_url.split('://', 1)
+        protocol, raw_url = raw_url.split('://', 1)
         username, password = None, None
         if '@' in raw_url:
             username_password, raw_url = raw_url.split('@', 1)
@@ -72,7 +76,7 @@ class Url:
             path = Path(raw_url)
 
         return Url(
-            scheme=scheme,
+            protocol=protocol,
             username=username,
             password=password,
             host=host,
@@ -82,12 +86,12 @@ class Url:
         )
 
     @property
-    def scheme(self) -> str:
-        """Scheme getter
+    def protocol(self) -> _PROTOCOL_T:
+        """Protocol getter
 
-        :return: `scheme`
+        :return: `protocol`
         """
-        return self._scheme
+        return self._protocol
 
     @property
     def username(self) -> str | None:
@@ -114,7 +118,7 @@ class Url:
         return self._host
 
     @property
-    def port(self) -> int | None:
+    def port(self) -> _PORT_T:
         """Port getter
 
         :return: `port`
@@ -170,9 +174,9 @@ class Url:
 
     def copy_with(
         self,
-        scheme: str = _EMPTY,
+        protocol: _PROTOCOL_T = _EMPTY,
         host: str = _EMPTY,
-        port: int | None = _EMPTY,
+        port: _PORT_T = _EMPTY,
         username: str | None = _EMPTY,
         password: str | None = _EMPTY,
         path: Path = _EMPTY,
@@ -180,7 +184,7 @@ class Url:
     ) -> 'Url':
         """Copy url with new attributes
 
-        :param scheme: scheme
+        :param protocol: scheme
         :param host: host
         :param port: port
         :param username: username
@@ -191,8 +195,8 @@ class Url:
         """
         copied_url = copy.copy(self)
 
-        if scheme is not _EMPTY:
-            copied_url._scheme = scheme
+        if protocol is not _EMPTY:
+            copied_url._protocol = protocol
         if host is not _EMPTY:
             copied_url._host = host
         if port is not _EMPTY:
@@ -225,7 +229,7 @@ class Url:
             for key, value in self._query.items()
         ) if self._query else ''
         path_part = '' if self._path == Path('') else self._path.as_posix()
-        return f'{self._scheme}://{auth_part}{self._host}{port}/{path_part}{query_part}'
+        return f'{self._protocol}://{auth_part}{self._host}{port}/{path_part}{query_part}'
 
     @staticmethod
     def _normalize_path(path: Path | None) -> Path | None:
@@ -243,7 +247,7 @@ class Url:
             return NotImplemented
 
         return all((
-            self.scheme == other.scheme,
+            self.protocol == other.protocol,
             self.host == other.host,
             (
                 self.username == other.username
@@ -259,7 +263,7 @@ class Url:
 
     def __copy__(self) -> 'Url':
         return Url(
-            scheme=self._scheme,
+            protocol=self._protocol,
             username=self._username,
             password=self._password,
             host=self._host,

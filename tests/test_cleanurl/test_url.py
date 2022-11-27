@@ -8,12 +8,12 @@ from cleanurl import Url
 
 class TestUrl:
 
-    def test_scheme_property(self):
-        scheme = 'ftp'
-        url = Url(scheme=scheme)
-        assert url.scheme == scheme
+    def test_protocol_property(self):
+        protocol = 'ftp'
+        url = Url(protocol=protocol)
+        assert url.protocol == protocol
         with pytest.raises(AttributeError):
-            url.scheme = 'new value'
+            url.protocol = 'new value'
 
     def test_username_property(self):
         username = 'value'
@@ -64,7 +64,7 @@ class TestUrl:
 
     @pytest.mark.parametrize(['url', 'result'], (
         (Url(), 'https://localhost/'),
-        (Url(scheme='http'), 'http://localhost/'),
+        (Url(protocol='http'), 'http://localhost/'),
         (Url(host='www.google.com'), 'https://www.google.com/'),
         (Url(port=8000), 'https://localhost:8000/'),
         (Url(username='ubuntu'), 'https://localhost/'),
@@ -76,7 +76,7 @@ class TestUrl:
         (Url(query={'param1': 'val1', 'param2': 'val2'}), 'https://localhost/?param1=val1&param2=val2'),
         (
             Url(
-                scheme='ftp',
+                protocol='ftp',
                 host='myhost',
                 port=21,
                 username='ubuntu',
@@ -92,7 +92,7 @@ class TestUrl:
 
     def test_repr(self):
         url = Url(
-            scheme='ftp',
+            protocol='ftp',
             host='myhost',
             port=21,
             username='ubuntu',
@@ -104,7 +104,7 @@ class TestUrl:
 
     def test_copy(self):
         url = Url(
-            scheme='ftp',
+            protocol='ftp',
             host='myhost',
             port=21,
             username='ubuntu',
@@ -115,7 +115,7 @@ class TestUrl:
 
         copied_url = copy.copy(url)
 
-        assert url.scheme == copied_url.scheme
+        assert url.protocol == copied_url.protocol
         assert url.host == copied_url.host
         assert url.port == copied_url.port
         assert url.username == copied_url.username
@@ -127,7 +127,7 @@ class TestUrl:
 
     def test_hash(self):
         url = Url(
-            scheme='ftp',
+            protocol='ftp',
             host='myhost',
             port=21,
             username='ubuntu',
@@ -174,7 +174,7 @@ class TestUrl:
 
     @pytest.mark.parametrize(('url', 'raw_url'), (
         (Url(), 'https://localhost/'),
-        (Url(scheme='http'), 'http://localhost/'),
+        (Url(protocol='http'), 'http://localhost/'),
         (Url(host='www.google.com'), 'https://www.google.com/'),
         (Url(port=8000), 'https://localhost:8000/'),
         (Url(username='ubuntu'), 'https://localhost/'),
@@ -186,7 +186,7 @@ class TestUrl:
         (Url(query={'param1': 'val1', 'param2': 'val2'}), 'https://localhost/?param1=val1&param2=val2'),
         (
             Url(
-                scheme='ftp',
+                protocol='ftp',
                 host='myhost',
                 port=21,
                 username='ubuntu',
@@ -210,11 +210,11 @@ class TestUrl:
 
     def test_copy_with(self):
         url = Url(
-            scheme='https',
+            protocol='https',
             username='ubuntu',
         )
 
-        assert url.copy_with(scheme='http').scheme == 'http'
+        assert url.copy_with(protocol='http').protocol == 'http'
         assert url.copy_with(host='myhost').host == 'myhost'
         assert url.copy_with(username=None).username is None
         assert url.copy_with(password='root').password == 'root'

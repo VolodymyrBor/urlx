@@ -1,6 +1,6 @@
 import copy
 from pathlib import Path
-from typing import TypeAlias
+from typing import TypeAlias, Any
 from types import MappingProxyType
 
 from .url_enums import Protocol, Port
@@ -61,8 +61,8 @@ class Url:
 
         port = None
         if ':' in host:
-            host, port = host.split(':', 1)
-            port = int(port)
+            host, raw_port = host.split(':', 1)
+            port = int(raw_port)
 
         query = {}
         if '?' in raw_url:
@@ -174,13 +174,13 @@ class Url:
 
     def copy_with(
         self,
-        protocol: _PROTOCOL_T = _EMPTY,
-        host: str = _EMPTY,
-        port: _PORT_T = _EMPTY,
-        username: str | None = _EMPTY,
-        password: str | None = _EMPTY,
-        path: Path = _EMPTY,
-        query: dict = _EMPTY,
+        protocol: _PROTOCOL_T = _EMPTY,  # type: ignore
+        host: str = _EMPTY,  # type: ignore
+        port: _PORT_T = _EMPTY,  # type: ignore
+        username: str | None = _EMPTY,  # type: ignore
+        password: str | None = _EMPTY,  # type: ignore
+        path: Path = _EMPTY,  # type: ignore
+        query: dict = _EMPTY,  # type: ignore
     ) -> 'Url':
         """Copy url with new attributes
 
@@ -232,17 +232,15 @@ class Url:
         return f'{self._protocol}://{auth_part}{self._host}{port}/{path_part}{query_part}'
 
     @staticmethod
-    def _normalize_path(path: Path | None) -> Path | None:
-        """Normalized path - remove extra symbols like `\` and `/`
+    def _normalize_path(path: Path) -> Path:
+        """Normalized path - remove extra symbols like slash
 
         :param path: path
         :return: normalized path
         """
-        if path is None:
-            return None
         return Path(str(path).strip('/\\'))
 
-    def __eq__(self, other: 'Url') -> bool | None:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Url):
             return NotImplemented
 
@@ -251,7 +249,7 @@ class Url:
             self.host == other.host,
             (
                 self.username == other.username
-                and self.password == other.password
+                and self.password == other.password  # pragma: no cover
             ) if self.contains_auth else True,
             self.port == other.port,
             self.path == other.path,

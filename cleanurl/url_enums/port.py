@@ -1,7 +1,9 @@
 from enum import IntEnum
 
+from cleanurl.strenum import Enum2Str
 
-class Port(IntEnum):
+
+class Port(IntEnum, Enum2Str):
     # HTTP
     HTTP = 80
     HTTPS = 443
@@ -24,6 +26,3 @@ class Port(IntEnum):
 
     # Queue services
     RMQ = 5672
-
-    def __str__(self) -> str:
-        return str(self.value)

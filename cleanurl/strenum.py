@@ -2,12 +2,14 @@ from enum import Enum
 from typing import Iterable
 
 
-class StrEnum(str, Enum):
+class Enum2Str(Enum):
+    def __str__(self) -> str:
+        return str(self.value)  # type: ignore
+
+
+class StrEnum(str, Enum2Str):
 
     @classmethod
-    def str_values(cls) -> Iterable[str]:
+    def values(cls) -> Iterable[str]:
         for item in cls:
             yield item.value  # type: ignore
-
-    def __str__(self) -> str:
-        return self.value  # type: ignore

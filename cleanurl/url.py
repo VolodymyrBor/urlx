@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import TypeAlias, Any
 from types import MappingProxyType
 
-from .url_enums import Protocol, Port
+from cleanurl.url_enums import Protocol, Port
 
 StrDict: TypeAlias = dict[str, str]
 _PORT_T: TypeAlias = Port | int | None
@@ -278,3 +278,17 @@ class Url:
         cls_name = cls.__name__
         method_name = cls.parse.__name__
         return f'{cls_name}.{method_name}({self.build()!r})'
+
+
+if __name__ == '__main__':
+    url = Url(
+        protocol=Protocol.HTTPS,
+        host='localhost',
+        port=80,
+        path=Path('api/user-list'),
+        query={
+            'limit': '100',
+            'skip': '20',
+        },
+    )
+    print(url)

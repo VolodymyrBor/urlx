@@ -249,7 +249,7 @@ class Url:
             self.host == other.host,
             (
                 self.username == other.username
-                and self.password == other.password  # pragma: no cover
+                and self.password == other.password
             ) if self.contains_auth else True,
             self.port == other.port,
             self.path == other.path,
@@ -280,7 +280,7 @@ class Url:
         return f'{cls_name}.{method_name}({self.build()!r})'
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     url = Url(
         protocol=Protocol.HTTPS,
         host='localhost',

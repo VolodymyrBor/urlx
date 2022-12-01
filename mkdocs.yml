@@ -1,5 +1,5 @@
-site_name: cleanurl
-repo_url: https://github.com/VolodymyrBor/cleanurl
+site_name: urlx
+repo_url: https://github.com/VolodymyrBor/urlx
 
 theme:
   name: material

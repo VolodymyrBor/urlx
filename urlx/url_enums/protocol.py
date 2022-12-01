@@ -1,4 +1,4 @@
-from cleanurl.strenum import StrEnum
+from urlx.strenum import StrEnum
 
 
 class Protocol(StrEnum):

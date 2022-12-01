@@ -5,24 +5,24 @@ from urlx.strenum import Enum2Str
 
 class Port(IntEnum, Enum2Str):
     # HTTP
-    HTTP = 80
-    HTTPS = 443
+    HTTP_80 = 80
+    HTTPS_443 = 443
 
     # Emails
-    SMTP = 25
-    SMTP_SSL_TLS = 465
+    SMTP_25 = 25
+    SMTP_SSL_TLS_465 = 465
 
     # FTP
     FTP_20 = 20
-    FTP_21 = 20
+    FTP_21 = 21
 
-    SSH = 22
+    SSH_22 = 22
 
     # Databases
-    REDIS = 6379
-    MY_SQL = 3306
-    REDSHIFT = 5439
-    POSTGRES_SQL = 5432
+    REDIS_6379 = 6379
+    MY_SQL_3306 = 3306
+    REDSHIFT_5439 = 5439
+    POSTGRES_SQL_5432 = 5432
 
     # Queue services
-    RMQ = 5672
+    RMQ_5672 = 5672

@@ -30,4 +30,6 @@ nav:
   - Home: index.md
   - API Documentation:
       - Url: url.md
+      - Port: port.md
+      - Protocol: protocol.md
   - Changelog: changelog.md

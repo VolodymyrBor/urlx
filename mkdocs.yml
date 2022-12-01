@@ -1,0 +1,33 @@
+site_name: cleanurl
+repo_url: https://github.com/VolodymyrBor/cleanurl
+
+theme:
+  name: material
+  favicon: img/icon.png
+  logo: img/icon.png
+
+plugins:
+  - mkdocstrings:
+      custom_templates: templates
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+            docstring_style: sphinx
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - API Documentation:
+      - Url: url.md
+  - Changelog: changelog.md

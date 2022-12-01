@@ -1,8 +1,15 @@
 import copy
 from pathlib import Path
-from typing import TypeAlias
+from typing import TypeAlias, Any
+from types import MappingProxyType
+
+from cleanurl.url_enums import Protocol, Port
 
 StrDict: TypeAlias = dict[str, str]
+_PORT_T: TypeAlias = Port | int | None
+_PROTOCOL_T: TypeAlias = Protocol | str
+
+_EMPTY = object()
 
 
 class Url:
@@ -14,35 +21,37 @@ class Url:
         '_password',
         '_host',
         '_port',
-        '_scheme',
+        '_protocol',
         '_query',
-        '_cashed_build_url',
     )
 
     def __init__(
         self,
         *,
-        scheme: str = 'https',
+        protocol: _PROTOCOL_T = Protocol.HTTPS,
         host: str = 'localhost',
         username: str | None = None,
         password: str | None = None,
-        path: Path = Path('/'),
-        port: int | None = None,
+        path: Path = Path(''),
+        port: _PORT_T = None,
         query: StrDict | None = None,
     ):
         self._port = port
-        self._path = path
+        self._path = self._normalize_path(path)
         self._password = password
         self._username = username
         self._host = host
-        self._scheme = scheme
-        self._query: dict = {} if query is None else query
-
-        self._cashed_build_url: str | None = None
+        self._protocol = protocol
+        self._query: dict = {} if query is None else copy.copy(query)
 
     @classmethod
     def parse(cls, raw_url: str) -> 'Url':
-        scheme, raw_url = raw_url.split('://', 1)
+        """Parse string-url to `Url`
+
+        :param raw_url: string url
+        :return: parsed `Url`
+        """
+        protocol, raw_url = raw_url.split('://', 1)
         username, password = None, None
         if '@' in raw_url:
             username_password, raw_url = raw_url.split('@', 1)
@@ -52,8 +61,8 @@ class Url:
 
         port = None
         if ':' in host:
-            host, port = host.split(':', 1)
-            port = int(port)
+            host, raw_port = host.split(':', 1)
+            port = int(raw_port)
 
         query = {}
         if '?' in raw_url:
@@ -67,7 +76,7 @@ class Url:
             path = Path(raw_url)
 
         return Url(
-            scheme=scheme,
+            protocol=protocol,
             username=username,
             password=password,
             host=host,
@@ -77,78 +86,182 @@ class Url:
         )
 
     @property
-    def scheme(self) -> str:
-        return self._scheme
+    def protocol(self) -> _PROTOCOL_T:
+        """Protocol getter
+
+        :return: `protocol`
+        """
+        return self._protocol
 
     @property
     def username(self) -> str | None:
+        """Username getter
+
+        :return: `username`
+        """
         return self._username
 
     @property
     def password(self) -> str | None:
+        """Password getter
+
+        :return: `password`
+        """
         return self._password
 
     @property
     def host(self) -> str:
+        """Host getter
+
+        :return: `host`
+        """
         return self._host
 
     @property
-    def port(self) -> int | None:
+    def port(self) -> _PORT_T:
+        """Port getter
+
+        :return: `port`
+        """
         return self._port
 
     @property
     def path(self) -> Path:
+        """Path getter
+
+        :return: url path
+        """
         return self._path
 
     @property
-    def query(self) -> StrDict:
-        return self._query
+    def query(self) -> MappingProxyType[str, str]:
+        """Query getter
+
+        :return: unmodifiable view of query
+        """
+        return MappingProxyType(self._query)
+
+    @property
+    def contains_auth(self) -> bool:
+        """Check that url contains auth part
+
+        :return: True if `username` and `password` are not None
+        """
+        return all((
+            self.username is not None,
+            self.password is not None,
+        ))
 
     def join_path(self, path: Path) -> 'Url':
+        """Join path to url
+
+        :param path: additional path
+        :return: new url
+        """
         new_url = copy.copy(self)
-        new_url._path = new_url._path.joinpath(path)
+        new_url._path = new_url._path.joinpath(self._normalize_path(path))
         return new_url
 
     def update_query(self, query: StrDict) -> 'Url':
+        """Update query part of the url
+
+        :param query: dict of query parameters
+        :return: new url
+        """
         new_url = copy.copy(self)
         new_url._query.update(query)
         return new_url
 
-    def _build_url(self) -> str:
+    def copy_with(
+        self,
+        protocol: _PROTOCOL_T = _EMPTY,  # type: ignore
+        host: str = _EMPTY,  # type: ignore
+        port: _PORT_T = _EMPTY,  # type: ignore
+        username: str | None = _EMPTY,  # type: ignore
+        password: str | None = _EMPTY,  # type: ignore
+        path: Path = _EMPTY,  # type: ignore
+        query: dict = _EMPTY,  # type: ignore
+    ) -> 'Url':
+        """Copy url with new attributes
 
-        if self._cashed_build_url is not None:
-            return self._cashed_build_url
+        :param protocol: scheme
+        :param host: host
+        :param port: port
+        :param username: username
+        :param password: password
+        :param path: path
+        :param query: query
+        :return: new url
+        """
+        copied_url = copy.copy(self)
 
-        auth_part = f'{self._username}:{self._password}@' if self._password and self._username else ''
+        if protocol is not _EMPTY:
+            copied_url._protocol = protocol
+        if host is not _EMPTY:
+            copied_url._host = host
+        if port is not _EMPTY:
+            copied_url._port = port
+        if username is not _EMPTY:
+            copied_url._username = username
+        if password is not _EMPTY:
+            copied_url._password = password
+        if path is not _EMPTY:
+            copied_url._path = path
+        if query is not _EMPTY:
+            copied_url._query = query
+
+        return copied_url
+
+    def build(self, secure_password: bool = False) -> str:
+        """Build str-representation of the url
+
+        :param secure_password: `password` will be hidden if it's `True`
+        :return: str-representation of the url
+        """
+        auth_part = ''
+        if self._password and self._username:
+            password = '<password>' if secure_password else self._password
+            auth_part = f'{self._username}:{password}@'
+
         port = f':{self._port}' if self._port else ''
         query_part = '?' + '&'.join(
             f'{key}={value}'
             for key, value in self._query.items()
         ) if self._query else ''
-        build_url = f'{self._scheme}://{auth_part}{self._host}{port}/{self._path.as_posix()}{query_part}'
-        self._cashed_build_url = build_url
-        return build_url
+        path_part = '' if self._path == Path('') else self._path.as_posix()
+        return f'{self._protocol}://{auth_part}{self._host}{port}/{path_part}{query_part}'
 
-    def __eq__(self, other: 'Url') -> bool | None:
+    @staticmethod
+    def _normalize_path(path: Path) -> Path:
+        """Normalized path - remove extra symbols like slash
+
+        :param path: path
+        :return: normalized path
+        """
+        return Path(str(path).strip('/\\'))
+
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Url):
             return NotImplemented
 
         return all((
-            self.scheme == other.scheme,
+            self.protocol == other.protocol,
             self.host == other.host,
-            self.username == other.username,
-            self.password == other.password,
+            (
+                self.username == other.username
+                and self.password == other.password
+            ) if self.contains_auth else True,
             self.port == other.port,
             self.path == other.path,
             self.query == other.query,
         ))
 
     def __hash__(self) -> int:
-        return hash(repr(self))
+        return hash(str(self))
 
     def __copy__(self) -> 'Url':
         return Url(
-            scheme=self._scheme,
+            protocol=self._protocol,
             username=self._username,
             password=self._password,
             host=self._host,
@@ -158,23 +271,24 @@ class Url:
         )
 
     def __str__(self) -> str:
-        return self._build_url()
+        return self.build()
 
     def __repr__(self) -> str:
         cls = type(self)
         cls_name = cls.__name__
         method_name = cls.parse.__name__
-        return f'{cls_name}.{method_name}({self._build_url()!r})'
+        return f'{cls_name}.{method_name}({self.build()!r})'
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     url = Url(
-        scheme='http',
-        host='127.0.0.1',
-        port=8000,
-        username='ubuntu',
-        password='ubuntu',
-        path=Path('api/net'),
-        query={'query': 'books'},
+        protocol=Protocol.HTTPS,
+        host='localhost',
+        port=Port.HTTPS,
+        path=Path('api/user-list'),
+        query={
+            'limit': '100',
+            'skip': '20',
+        },
     )
     print(url)

@@ -4,3 +4,6 @@
 
 # Venv
 venv
+
+# Tests
+.coverage

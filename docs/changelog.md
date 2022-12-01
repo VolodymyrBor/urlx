@@ -3,6 +3,7 @@
  * Updated docs
  * Update pyproject.toml
  * Added licenses
+ * Fixed Makefile
 
 
 ### [0.1.0] (2022-12-01)

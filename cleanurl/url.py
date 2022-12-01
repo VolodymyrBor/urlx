@@ -284,7 +284,7 @@ if __name__ == '__main__':  # pragma: no cover
     url = Url(
         protocol=Protocol.HTTPS,
         host='localhost',
-        port=80,
+        port=Port.HTTPS,
         path=Path('api/user-list'),
         query={
             'limit': '100',

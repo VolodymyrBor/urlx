@@ -1,9 +1,13 @@
 [tool.poetry]
 name = "urlx"
 version = "0.1.1"
-description = ""
+description = "The purpose of this package is to standardize URL declaration in the codebase"
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 readme = "README.md"
+license = "MIT"
+homepage = "https://volodymyrbor.github.io/urlx/"
+repository = "https://github.com/VolodymyrBor/urlx"
+documentation = "https://volodymyrbor.github.io/urlx/"
 
 [tool.poetry.dependencies]
 python = "^3.10"

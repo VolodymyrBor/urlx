@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cleanurl"
+name = "urlx"
 version = "0.1.1"
 description = ""
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]

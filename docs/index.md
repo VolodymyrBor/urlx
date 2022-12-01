@@ -48,9 +48,9 @@ This approach should reduce the number of errors and speed up code writing.
 ## Example
 
 ```python
-from  pathlib import Path
+from pathlib import Path
 
-from cleanurl import Url, Protocol, Port
+from urlx import Url, Protocol, Port
 
 url = Url(
     protocol=Protocol.HTTPS,

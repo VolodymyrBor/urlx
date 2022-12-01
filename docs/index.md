@@ -1,10 +1,10 @@
-<p align="center">
-    <a href="https://volodymyrbor.github.io/cleanurl">
-        <img src="https://volodymyrbor.github.io/cleanurl/img/icon.png" alt="CleanURL" width="300">
-    </a>
-</p>
+# Home
 
-# CleanURL
+## Overview
+
+<figure markdown>
+  ![cleanurl](img/icon.png){ width="300" align }
+</figure>
 
 <a href="https://pypi.org/project/cleanurl" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/cleanurl.svg?color=%2334D058" alt="Supported Python versions">
@@ -26,6 +26,22 @@
 **cleanurl** - provide new data type - `Url`.
 The purpose of this package is to standardize URL declaration in the codebase.
 This approach should reduce the number of errors and speed up code writing.
+
+---
+
+## Installation
+
+=== "PIP"
+
+    ``` shell
+    pip install cleanurl
+    ```
+
+=== "Poetry"
+
+    ``` shell
+    poetry add cleanurl
+    ```
 
 ---
 

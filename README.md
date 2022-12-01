@@ -4,7 +4,7 @@
     </a>
 </p>
 
-# CleanURL
+# CleanUrl
 
 <a href="https://pypi.org/project/cleanurl" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/cleanurl.svg?color=%2334D058" alt="Supported Python versions">

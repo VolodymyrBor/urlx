@@ -1,3 +1,7 @@
+### [1.0.0] (2022-12-01)
+ 📄Added doc pages for port and protol
+ ✨ Improved usability of port enum: added value of port to each field
+
 ### [0.1.1] (2022-12-01)
  * Full Rebranding to UrlX
  * Updated docs
@@ -13,3 +17,4 @@
 
 [0.1.0]: https://github.com/VolodymyrBor/cleanurl/pull/1
 [0.1.1]: https://github.com/VolodymyrBor/cleanurl/pull/3
+[0.1.1]: https://github.com/VolodymyrBor/cleanurl/pull/5

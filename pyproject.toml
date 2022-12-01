@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "urlx"
-version = "0.1.1"
+version = "1.0.0"
 description = "The purpose of this package is to standardize URL declaration in the codebase"
 authors = ["volodymyrb <volodymyr.borysiuk0@gmail.com>"]
 readme = "README.md"

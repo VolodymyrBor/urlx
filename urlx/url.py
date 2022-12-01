@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import TypeAlias, Any
 from types import MappingProxyType
 
-from cleanurl.url_enums import Protocol, Port
+from urlx.url_enums import Protocol, Port
 
 StrDict: TypeAlias = dict[str, str]
 _PORT_T: TypeAlias = Port | int | None

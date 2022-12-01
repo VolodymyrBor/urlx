@@ -3,17 +3,17 @@
 ## Overview
 
 <figure markdown>
-  ![cleanurl](img/icon.png){ width="300" align }
+  ![urlx](img/icon.png){ width="300" align }
 </figure>
 
-<a href="https://pypi.org/project/cleanurl" target="_blank">
-    <img src="https://img.shields.io/pypi/pyversions/cleanurl.svg?color=%2334D058" alt="Supported Python versions">
+<a href="https://pypi.org/project/urlx" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/urlx.svg?color=%2334D058" alt="Supported Python versions">
 </a>
-<a href="https://pypi.org/project/cleanurl" target="_blank">
-    <img src="https://img.shields.io/pypi/v/cleanurl?color=%2334D058&label=pypi%20package" alt="Package version">
+<a href="https://pypi.org/project/urlx" target="_blank">
+    <img src="https://img.shields.io/pypi/v/urlx?color=%2334D058&label=pypi%20package" alt="Package version">
 </a>
-<a href="https://github.com/VolodymyrBor/cleanurl/actions?query=workflow%3ATest+event%3Apush+branch%3Amaster" target="_blank">
-    <img src="https://github.com/VolodymyrBor/cleanurl/workflows/Test/badge.svg?event=push&branch=master" alt="Test">
+<a href="https://github.com/VolodymyrBor/urlx/actions?query=workflow%3ATest+event%3Apush+branch%3Amaster" target="_blank">
+    <img src="https://github.com/VolodymyrBor/urlx/workflows/Test/badge.svg?event=push&branch=master" alt="Test">
 </a>
 
 [![Supported Versions](https://img.shields.io/badge/coverage-100%25-green)](https://shields.io/)
@@ -23,7 +23,7 @@
 
 ---
 
-**cleanurl** - provide new data type - `Url`.
+**urlx** - provide new data type - `Url`.
 The purpose of this package is to standardize URL declaration in the codebase.
 This approach should reduce the number of errors and speed up code writing.
 
@@ -34,13 +34,13 @@ This approach should reduce the number of errors and speed up code writing.
 === "PIP"
 
     ``` shell
-    pip install cleanurl
+    pip install urlx
     ```
 
 === "Poetry"
 
     ``` shell
-    poetry add cleanurl
+    poetry add urlx
     ```
 
 ---
@@ -48,9 +48,9 @@ This approach should reduce the number of errors and speed up code writing.
 ## Example
 
 ```python
-from  pathlib import Path
+from pathlib import Path
 
-from cleanurl import Url, Protocol, Port
+from urlx import Url, Protocol, Port
 
 url = Url(
     protocol=Protocol.HTTPS,
@@ -72,8 +72,8 @@ Output:
 
 ## Links
 
-**Source code**: [github.com/VolodymyrBor/cleanurl](https://github.com/VolodymyrBor/cleanurl)
+**Source code**: [github.com/VolodymyrBor/urlx](https://github.com/VolodymyrBor/urlx)
 
-**Documentation**: [cleanurl](https://volodymyrbor.github.io/cleanurl/)
+**Documentation**: [urlx](https://volodymyrbor.github.io/urlx/)
 
-**Changelog**: [changelog](https://volodymyrbor.github.io/cleanurl/changelog)
+**Changelog**: [changelog](https://volodymyrbor.github.io/urlx/changelog)

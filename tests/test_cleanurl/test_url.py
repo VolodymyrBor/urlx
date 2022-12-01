@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from cleanurl import Url
+from urlx import Url
 
 
 class TestUrl:

@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from cleanurl.strenum import Enum2Str
+from urlx.strenum import Enum2Str
 
 
 class Port(IntEnum, Enum2Str):

@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from cleanurl import strenum
+from urlx import strenum
 
 
 class TestStrEnum:

@@ -39,7 +39,7 @@ from urlx import Url, Protocol, Port
 url = Url(
     protocol=Protocol.HTTPS,
     host='localhost',
-    port=Port.HTTPS,
+    port=Port.HTTPS_443,
     path=Path('api/user-list'),
     query={
         'limit': '100',

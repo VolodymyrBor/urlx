@@ -1,6 +1,6 @@
 ### [1.0.1] (2022-12-02)
 *  💚 fixed CI&CD
-*  📃 Added GitHub budge related to build status
+*  📃 Added the GitHub badge related to building status
 
 ### [1.0.0] (2022-12-01)
 *  📄 Added doc pages for port and protol
